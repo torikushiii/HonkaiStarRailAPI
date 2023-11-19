@@ -1,5 +1,4 @@
 const HoyoLab = require("./hoyolab");
-const Prydwen = require("./prydwen");
 const Defaults = require("./defaults");
 
 const fetchAll = async () => {
@@ -8,8 +7,6 @@ const fetchAll = async () => {
 
 	const promises = await Promise.all([
 		HoyoLab.fetch(),
-		Prydwen.fetch(),
-
 		Defaults.fetch()
 	]);
 
