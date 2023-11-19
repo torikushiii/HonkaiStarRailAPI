@@ -32,7 +32,7 @@ exports.fetch = async () => {
 				reward.code = i;
 			}
 			else if (index % 3 === 1) {
-				reward.rewards = i.split(" and ");
+				reward.rewards = i.split(" and ").flatMap(i => i.split(", "));
 			}
 			else if (index % 3 === 2) {
 				rewards.push({
