@@ -57,46 +57,4 @@ Returns a list of all currently active and inactive redemption codes.
     }
 }
 ```
-
-```json
-{
-  "active": [
-    {
-      "code": "STARRAILGIFT",
-      "rewards": [
-        "50 Stellar Jades",
-        "EXP materials"
-      ]
-    },
-    {
-      "code": "5S9BND25CRBK",
-      "rewards": [
-        "Stellar Jade x50",
-        "Credits x10000"
-      ]
-    },
-    {
-      "code": "SOULWLT4EB",
-      "rewards": [
-        "Random stuff"
-      ]
-    }
-  ],
-  "inactive": [
-    {
-      "code": "PT8TF72MQ93X",
-      "rewards": [
-        "Stellar Jade x50",
-        "Credits x10000"
-      ]
-    },
-    {
-      "code": "STPN3TUUTQ8K",
-      "rewards": [
-        "Stellar Jade x50",
-        "Credits x10000"
-      ]
-    }
-}
-```
 </details>
