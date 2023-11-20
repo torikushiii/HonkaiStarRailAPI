@@ -28,6 +28,7 @@ require("./db-access.js");
 
 	const resolvers = require("./resolvers");
 	const redeemer = require("./redeemer");
+	const newsUpdater = require("./resolvers/news");
 	const crons = [
 		new app.Cron({
 			name: "fetch-data",
@@ -52,6 +53,18 @@ require("./db-access.js");
 				}
 				if (res.inactiveCodes.length > 0) {
 					log.info(`Processed ${res.inactiveCodes.length} inactive codes.`);
+				}
+			})
+		}),
+		new app.Cron({
+			name: "news-update",
+			expression: "*/5 * * * *",
+			code: (async function initializer () {
+				try {
+					await newsUpdater.fetch();
+				}
+				catch (e) {
+					debug.error("Failed to fetch news.", e);
 				}
 			})
 		})
@@ -114,6 +127,12 @@ require("./db-access.js");
 				"/starrail/code",
 				"/starrail/news"
 			]
+		});
+	});
+
+	fastify.addHook("onSend", async (request, reply) => {
+		reply.headers({
+			"Content-Type": "application/json"
 		});
 	});
 
