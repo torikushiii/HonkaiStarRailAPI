@@ -3,8 +3,8 @@
   "module": "index.js",
   "type": "commonjs",
   "scripts": {
-    "debug": "DEBUG=resolver:*,db:*,debug:*,init:*,redeemer:*,code-validation:* node index.js",
-    "start": "DEBUG=resolver:*,db:*,init:*,redeemer:*,code-validation:* node index.js"
+    "debug": "DEBUG=resolver:*,db:*,debug:*,init:*,redeemer:*,code-validation:*,news-updater:* node index.js",
+    "start": "DEBUG=resolver:*,db:*,init:*,redeemer:*,code-validation:*,news-updater:* node index.js"
   },
   "devDependencies": {
     "bun-types": "latest",
