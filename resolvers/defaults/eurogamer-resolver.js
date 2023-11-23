@@ -16,10 +16,19 @@ exports.fetch = async () => {
 		}
 
 		const $ = app.Utils.cheerio(res.body);
-		const codes = $("ul li strong").toArray().map(i => $(i).text());
-		if (codes.length === 0) {
-			debug.error(res.body);
-			logger.error("No codes found.");
+		const activeCodes = [];
+
+		const list = $("#content_above > div.page_content > article > div > div > ul:nth-child(14) > li");
+		for (let i = 0; i < list.length; i++) {
+			const el = list[i];
+			const text = $(el).text().trim();
+			const code = text.split(":")[0].trim();
+			const reward = text.split(":")[1].trim();
+			activeCodes.push({
+				code,
+				reward,
+				source: "Eurogamer"
+			});
 		}
 
 		const table = $("table").toArray().map(i => $(i).text());
@@ -45,9 +54,11 @@ exports.fetch = async () => {
 			}
 		}
 
-		debug.info(`Found ${codes.length} codes.`, { rewards });
+		const codes = [...activeCodes, ...rewards];
 
-		return rewards;
+		debug.info(`Found ${codes.length} codes.`, { codes });
+
+		return codes;
 	}
 	catch {
 		return [];
