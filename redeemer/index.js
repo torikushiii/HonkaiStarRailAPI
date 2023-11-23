@@ -51,6 +51,7 @@ const checkAndRedeem = async (codeList) => {
 		}
 
 		if (res.body.retcode === -1071) {
+			await new Promise((resolve) => setTimeout(resolve, 5000));
 			throw new app.Error({
 				message: "Invalid account credentials.",
 				args: {
@@ -58,8 +59,14 @@ const checkAndRedeem = async (codeList) => {
 				}
 			});
 		}
+		if (res.body.retcode === -2017) {
+			await new Promise((resolve) => setTimeout(resolve, 5000));
+			logger.warn(`Code ${data.code} is already redeemed. Skipping...`);
+			continue;
+		}
 
 		if (res.body.retcode !== 0) {
+			await new Promise((resolve) => setTimeout(resolve, 5000));
 			throw new app.Error({
 				message: "Unknown error while redeeming code.",
 				args: {
