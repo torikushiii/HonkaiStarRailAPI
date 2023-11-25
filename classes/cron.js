@@ -1,12 +1,16 @@
 const { CronJob } = require("cron");
 
-module.exports = class Cron {
+module.exports = class Cron extends require("./template") {
 	name;
 	expression;
 	code;
 	data;
 
+	static importable = true;
+
 	constructor (data) {
+		super();
+
 		this.name = data.name;
 		if (typeof this.name !== "string") {
 			throw new app.Error({

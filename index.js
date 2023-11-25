@@ -7,6 +7,11 @@ const GotModule = require("./singletons/got.js");
 const Logger = require("./singletons/logger.js");
 const DatabaseManager = require("./singletons/query.js");
 
+const importModule = async (module, path) => {
+	const definitions = require(`./${path}/index.js`);
+	await module.importData(definitions);
+};
+
 require("./db-access.js");
 
 (async () => {
@@ -26,54 +31,6 @@ require("./db-access.js");
 		mongoDbName: process.env.MONGO_DB_NAME
 	});
 
-	const resolvers = require("./resolvers");
-	const redeemer = require("./redeemer");
-	const newsUpdater = require("./resolvers/news");
-	const crons = [
-		new app.Cron({
-			name: "fetch-data",
-			expression: "*/10 * * * *",
-			code: (async function initializer () {
-				const codeList = await resolvers.fetchAll();
-				await redeemer.checkAndRedeem(codeList);
-			})
-		}),
-		new app.Cron({
-			name: "code-validation",
-			expression: "*/30 * * * *",
-			code: (async function initializer () {
-				const res = await redeemer.validateRedeemCodes();
-				if (res.activeCodes.length === 0 && res.inactiveCodes.length === 0) {
-					return;
-				}
-
-				const log = await app.Logger("code-validation");
-				if (res.activeCodes.length > 0) {
-					log.info(`Processed ${res.activeCodes.length} active codes.`);
-				}
-				if (res.inactiveCodes.length > 0) {
-					log.info(`Processed ${res.inactiveCodes.length} inactive codes.`);
-				}
-			})
-		}),
-		new app.Cron({
-			name: "news-update",
-			expression: "*/5 * * * *",
-			code: (async function initializer () {
-				try {
-					await newsUpdater.fetch();
-				}
-				catch (e) {
-					debug.error("Failed to fetch news.", e);
-				}
-			})
-		})
-	];
-
-	for (const cron of crons) {
-		cron.start();
-	}
-
 	globalThis.app = {
 		...app,
 		Error: CustomError,
@@ -82,6 +39,8 @@ require("./db-access.js");
 		Got: await GotModule,
 		Query: Query.client()
 	};
+
+	await importModule(app.Cron, "crons");
 
 	logger.info("Initializing server...");
 
@@ -134,6 +93,10 @@ require("./db-access.js");
 		reply.headers({
 			"Content-Type": "application/json"
 		});
+	});
+
+	fastify.addHook("onRequest", async (request, reply) => {
+		console.log(`[${request.ip}] ${request.method} ${request.url}`);
 	});
 
 	const subroutes = [
