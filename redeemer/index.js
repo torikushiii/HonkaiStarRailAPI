@@ -77,6 +77,8 @@ const checkAndRedeem = async (codeList) => {
 		}
 
 		logger.info(`Successfully redeemed code ${data.code}.`);
+		
+		await sendNotification(data);
 		await new Promise((resolve) => setTimeout(resolve, 5000));
 	}
 };
@@ -178,6 +180,43 @@ const validateRedeemCodes = async () => {
 		inactiveCodes
 	};
 };
+
+const sendNotification = async (codeData) => {
+	const { DISCORD_WEBHOOK } = config;
+
+	const res = await app.Got({
+		url: DISCORD_WEBHOOK,
+		method: "POST",
+		responseType: "json",
+		json: {
+			embeds: [
+				{
+					color: 0xBB0BB5,
+					title: "Honkai: Star Rail New Code",
+					description: `Code: ${codeData.code}`
+					+ `\n Rewards: ${codeData.rewards}`,
+					timestamp: new Date(),
+					footer: {
+						text: "Honkai: Star Rail New Code"
+					}
+				}
+			],
+			username: "Honkai: Star Rail",
+			avatar_url: "https://i.imgur.com/o0hyhmw.png"
+		}
+	});
+
+	if (res.statusCode !== 204) {
+		throw new app.Error({
+			message: "Failed to send message to Discord",
+			args: {
+				statusCode: res.statusCode,
+				statusMessage: res.statusMessage,
+				body: res.body
+			}
+		});
+	}
+}
 
 module.exports = {
 	checkAndRedeem,
