@@ -12,8 +12,20 @@ const fetchAll = async () => {
 
 	const data = promises
 		.flat()
-		.filter((code) => code)
-		.filter((code, index, self) => self.findIndex((i) => i.code === code.code) === index);
+		.filter(Boolean)
+		.filter((code) => !code.code.toLowerCase().includes("random"))
+		// HoyoLab takes less priority than other sources
+		.sort((a, b) => {
+			if (a.source === "HoyoLab Forum" && b.source !== "HoyoLab Forum") {
+				return 1;
+			}
+			if (a.source !== "HoyoLab Forum" && b.source === "HoyoLab Forum") {
+				return -1;
+			}
+
+			return 0;
+		})
+		.filter((code, index, self) => self.findIndex((i) => i.code === code.code) === index)
 
 	debug.info(`Found ${data.length} codes to be checked.`);
 
