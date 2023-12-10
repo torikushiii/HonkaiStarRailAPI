@@ -216,7 +216,7 @@ const sendNotification = async (codeData) => {
 			}
 		});
 	}
-}
+};
 
 module.exports = {
 	checkAndRedeem,
