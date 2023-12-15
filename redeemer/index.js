@@ -81,6 +81,8 @@ const checkAndRedeem = async (codeList) => {
 		await sendNotification(data);
 		await new Promise((resolve) => setTimeout(resolve, 5000));
 	}
+
+	return true;
 };
 
 const validateRedeemCodes = async () => {
