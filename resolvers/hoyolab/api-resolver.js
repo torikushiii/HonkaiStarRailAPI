@@ -46,6 +46,19 @@ exports.fetch = async () => {
 		}
 	];
 
-	// finish this when there's redemption at HoyoLab
-	return [];
+	const pendingCodes = [];
+	const bonuses = (exchangeGroup && exchangeGroup.exchange_group && exchangeGroup.exchange_group.bonuses) ?? [];
+	if (bonuses.length !== 0) {
+		const availableCodes = bonuses.filter(i => i.code_status === "ON");
+		for (const code of availableCodes) {
+			const rewards = code.icon_bonuses.map(i => ({
+				code: i.bonus_num,
+				reward: `${i.bonus_num} ${pictureHash.find(j => i.icon_url.includes(j.hash))?.name}` ?? "Unknown"
+			}));
+
+			pendingCodes.push({ code: code.exchange_code, rewards: rewards.map(i => `x${i.reward}`) });
+		}
+	}
+
+	return pendingCodes;
 };
