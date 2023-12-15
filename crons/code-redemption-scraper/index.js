@@ -1,6 +1,6 @@
 const definition = {
 	name: "code-redemption-scraper",
-	expression: "*/10 * * * *",
+	expression: "* * * * *",
 	code: (async function fetchCodeRedemption () {
 		const resolvers = require("../../resolvers");
 		const redeemer = require("../../redeemer");
