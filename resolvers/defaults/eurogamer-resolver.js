@@ -23,7 +23,7 @@ exports.fetch = async () => {
 			const el = list[i];
 			const text = $(el).text().trim();
 			const code = text.split(":")[0].trim();
-			const reward = text.split(":")[1].trim().split(", ").map(i => i.replace("(new!)", "").trim());
+			const reward = text.split(":")[1].trim().split(", ").map(i => i.replace(/\(new!\)|and/g, "").trim());
 
 			activeCodes.push({
 				code,
