@@ -37,7 +37,7 @@ const fetchAll = async () => {
 
 	const filteredData = data.filter(i => !codes.has(i.code));
 	if (filteredData.length === 0) {
-		logger.info("No new codes found.");
+		debug.info("No new codes found.");
 		return [];
 	}
 
