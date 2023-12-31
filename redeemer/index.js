@@ -64,7 +64,6 @@ const checkAndRedeem = async (codeList) => {
 			logger.warn(`Code ${data.code} is already redeemed. Skipping...`);
 			continue;
 		}
-
 		if (res.body.retcode !== 0) {
 			await new Promise((resolve) => setTimeout(resolve, 5000));
 			throw new app.Error({
@@ -190,13 +189,17 @@ const sendNotification = async (codeData) => {
 		url: DISCORD_WEBHOOK,
 		method: "POST",
 		responseType: "json",
+		searchParams: {
+			wait: true
+		},
 		json: {
 			embeds: [
 				{
 					color: 0xBB0BB5,
 					title: "Honkai: Star Rail New Code",
 					description: `Code: ${codeData.code}`
-					+ `\n Rewards: ${codeData.rewards}`,
+					+ `\n Rewards:\n${codeData.rewards.join(", ")}`
+					+ `\n\n Claim here:\nhttps://hsr.hoyoverse.com/gift?code=${codeData.code}`,
 					timestamp: new Date(),
 					footer: {
 						text: "Honkai: Star Rail New Code"
@@ -208,7 +211,7 @@ const sendNotification = async (codeData) => {
 		}
 	});
 
-	if (res.statusCode !== 204) {
+	if (res.statusCode !== 200) {
 		throw new app.Error({
 			message: "Failed to send message to Discord",
 			args: {
@@ -218,6 +221,8 @@ const sendNotification = async (codeData) => {
 			}
 		});
 	}
+
+	return true;
 };
 
 module.exports = {
