@@ -23,6 +23,8 @@ exports.fetch = async () => {
 				statusCode: res.statusCode,
 				response: res.body
 			});
+
+			return [];
 		}
 
 		const posts = res.body.data.posts;

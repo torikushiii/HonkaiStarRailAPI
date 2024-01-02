@@ -13,6 +13,8 @@ exports.fetch = async () => {
 				statusCode: res.statusCode,
 				response: res.body
 			});
+
+			return [];
 		}
 
 		const $ = app.Utils.cheerio(res.body);

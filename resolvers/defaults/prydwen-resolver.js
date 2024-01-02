@@ -8,6 +8,15 @@ exports.fetch = async () => {
 			responseType: "text"
 		});
 
+		if (res.statusCode !== 200) {
+			logger.info("Failed to fetch data from Prydwen.", {
+				statusCode: res.statusCode,
+				response: res.body
+			});
+
+			return [];
+		}
+
 		const codes = [];
 		const $ = app.Utils.cheerio(res.body);
 

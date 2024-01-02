@@ -18,6 +18,8 @@ exports.fetch = async () => {
 			statusCode: res.statusCode,
 			response: res.body
 		});
+
+		return [];
 	}
 
 	const exchangeGroup = res.body.data.modules.find(i => i.exchange_group !== null);
