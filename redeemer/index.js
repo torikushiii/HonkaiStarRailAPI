@@ -47,6 +47,7 @@ const checkAndRedeem = async (codeList) => {
 				statusCode: res.statusCode
 			});
 
+			await new Promise((resolve) => setTimeout(resolve, 5000));
 			continue;
 		}
 
