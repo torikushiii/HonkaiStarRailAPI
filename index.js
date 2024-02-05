@@ -83,8 +83,8 @@ require("./db-access.js");
 		reply.send({
 			statusCode: 200,
 			routes: [
-				"/starrail/code",
-				"/starrail/news"
+				"code",
+				"news"
 			]
 		});
 	});
@@ -93,10 +93,6 @@ require("./db-access.js");
 		reply.headers({
 			"Content-Type": "application/json"
 		});
-	});
-
-	fastify.addHook("onRequest", async (request, reply) => {
-		console.log(`[${request.ip}] ${request.method} ${request.url}`);
 	});
 
 	const subroutes = [

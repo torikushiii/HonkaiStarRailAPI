@@ -20,12 +20,16 @@ exports.fetch = async () => {
 		const $ = app.Utils.cheerio(res.body);
     
 		const table = $("#mw-content-text > div.mw-parser-output > table > tbody").toArray().map(i => $(i).text());
-		const tableList = table[0].split("\n").filter(Boolean).slice(3);
+		const tableList = table[0].split("\n").filter(Boolean);
     
 		const rewards = [];
 		for (const row of tableList) {
-			const cleanText = row.replace(/All|(\[\d+\])/g, "").trim();
-			const codeRegex = /HSRGRANDOPEN[0-9]|[A-Z0-9]{12}/;
+			if (row.includes("China")) {
+				continue;
+			}
+
+			const cleanText = row.replace(/All|(\[\d+\]|Quick Redeem)|CodeServerRewardsDuration/g, "").trim();
+			const codeRegex = /HSRGRANDOPEN[0-9]|[A-Z0-9]{12,15}/;
 			const code = cleanText.match(codeRegex)?.[0];
 			if (!code) {
 				continue;
