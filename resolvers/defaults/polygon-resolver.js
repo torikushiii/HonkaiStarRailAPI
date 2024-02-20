@@ -33,7 +33,9 @@ exports.fetch = async () => {
 			}
 
 			const [, code_, rewards_] = match;
-			const rewards__ = rewards_.split(", ");
+			const rewards__ = rewards_
+				.split(", ")
+				.replace(/ and /g, ",");
 
 			rewards.push({
 				code: code_.trim(),
