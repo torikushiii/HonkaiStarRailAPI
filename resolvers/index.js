@@ -15,6 +15,8 @@ const fetchAll = async () => {
 
 	const data = [...hoyolab, ...defaults]
 		.filter((i) => i && !i.code.toLowerCase().includes("random"))
+		.filter((i) => i.code !== "")
+		.filter((i) => i.rewards.length !== 0)
 		.sort((a, b) => {
 			if (a.source === "HoyoLab Forum" && b.source !== "HoyoLab Forum") {
 				return 1;
@@ -25,7 +27,8 @@ const fetchAll = async () => {
 
 			return 0;
 		})
-		.filter((i, index, self) => self.findIndex((t) => t.code === i.code) === index);
+		.filter((i, index, self) => self.findIndex((t) => t.code === i.code) === index)
+		.filter(Boolean);
 
 	debug.info(`Found ${data.length} codes to be checked.`);
 
