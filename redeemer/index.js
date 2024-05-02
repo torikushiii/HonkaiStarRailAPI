@@ -140,8 +140,6 @@ const validateRedeemCodes = async () => {
 			});
 		}
 
-		console.log(res.statusCode, res.body);
-
 		// -2017: "Already redeemed"
 		// -2001: "Expired"
 		// -2003: "Invalid code"
