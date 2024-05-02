@@ -47,12 +47,12 @@ const checkAndRedeem = async (codeList) => {
 				statusCode: res.statusCode
 			});
 
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 10000));
 			continue;
 		}
 
 		if (res.body.retcode === -1071) {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 10000));
 			throw new app.Error({
 				message: "Invalid account credentials.",
 				args: {
@@ -61,12 +61,12 @@ const checkAndRedeem = async (codeList) => {
 			});
 		}
 		if (res.body.retcode === -2017) {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 10000));
 			logger.warn(`Code ${data.code} is already redeemed. Skipping...`);
 			continue;
 		}
 		if (res.body.retcode !== 0) {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 10000));
 			throw new app.Error({
 				message: "Unknown error while redeeming code.",
 				args: {
@@ -79,7 +79,7 @@ const checkAndRedeem = async (codeList) => {
 		logger.info(`Successfully redeemed code ${data.code}.`);
 		
 		await sendNotification(data);
-		await new Promise((resolve) => setTimeout(resolve, 5000));
+		await new Promise((resolve) => setTimeout(resolve, 10000));
 	}
 
 	return true;
@@ -140,15 +140,19 @@ const validateRedeemCodes = async () => {
 			});
 		}
 
+		console.log(res.statusCode, res.body);
+
 		// -2017: "Already redeemed"
 		// -2001: "Expired"
+		// -2003: "Invalid code"
+		// -2016: "Cooldown"
 		if (res.body.retcode === -2017) {
 			// skip this code because it's still active
 			activeCodes.push(data.code);
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 15000));
 			continue;
 		}
-		else if (res.body.retcode === -2001) {
+		else if (res.body.retcode === -2001 || res.body.retcode === -2003) {
 			logger.warn(`Code ${data.code} is expired.`, {
 				response: res.body
 			});
@@ -172,7 +176,15 @@ const validateRedeemCodes = async () => {
 			}
 
 			inactiveCodes.push(data.code);
-			await new Promise((resolve) => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 15000));
+			continue;
+		}
+		else if (res.body.retcode === -2016) {
+			logger.warn(`Code ${data.code} is in cooldown.`, {
+				response: res.body
+			});
+
+			await new Promise((resolve) => setTimeout(resolve, 15000));
 			continue;
 		}
 	}
