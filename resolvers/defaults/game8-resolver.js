@@ -28,7 +28,7 @@ exports.fetch = async () => {
 
 		for (let i = 0; i < $codes.length; i++) {
 			const $code = $($codes[i]);
-			const code = $code.find(".a-bold").text();
+			const code = $code.text().split(" ")[0].trim();
 			// eslint-disable-next-line newline-per-chained-call
 			const rewards = $code.text().replace(code, "").trim().split(", ");
 
