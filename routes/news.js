@@ -10,8 +10,11 @@ module.exports = function (fastify, opts, done) {
 	}));
 
 	Router.get("/events", async (req, res) => {
+		const lang = req.query.lang || "en";
+		const langCode = app.Utils.languageCodeConverter(lang);
+
 		const eventData = await app.Query.collection("news")
-			.find({ type: "event" })
+			.find({ type: "event", lang: langCode })
 			.project({ type: 0, _id: 0 })
 			.toArray();
 		
@@ -23,8 +26,11 @@ module.exports = function (fastify, opts, done) {
 	});
 
 	Router.get("/notices", async (req, res) => {
+		const lang = req.query.lang || "en";
+		const langCode = app.Utils.languageCodeConverter(lang);
+
 		const noticeData = await app.Query.collection("news")
-			.find({ type: "notice" })
+			.find({ type: "notice", lang: langCode })
 			.project({ type: 0, _id: 0 })
 			.toArray();
 		
@@ -36,8 +42,11 @@ module.exports = function (fastify, opts, done) {
 	});
 
 	Router.get("/info", async (req, res) => {
+		const lang = req.query.lang || "en";
+		const langCode = app.Utils.languageCodeConverter(lang);
+
 		const infoData = await app.Query.collection("news")
-			.find({ type: "info" })
+			.find({ type: "info", lang: langCode })
 			.project({ type: 0, _id: 0 })
 			.toArray();
 		

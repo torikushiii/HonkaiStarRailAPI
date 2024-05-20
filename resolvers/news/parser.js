@@ -1,4 +1,4 @@
-const events = (data) => {
+const events = (data, lang) => {
 	if (data.length === 0) {
 		return [];
 	}
@@ -14,14 +14,15 @@ const events = (data) => {
 			endAt: +item.end,
 			banner: item.banner_url,
 			url: `https://www.hoyolab.com/article/${item.id}`,
-			type: "event"
+			type: "event",
+			lang
 		});
 	}
 
 	return result;
 };
 
-const notices = (data) => {
+const notices = (data, lang) => {
 	if (data.length === 0) {
 		return [];
 	}
@@ -48,14 +49,15 @@ const notices = (data) => {
 			createdAt: +item.post.created_at,
 			banner: parseImage(item.image_list),
 			url: `https://www.hoyolab.com/article/${item.post.post_id}`,
-			type: "notice"
+			type: "notice",
+			lang
 		});
 	}
 
 	return result;
 };
 
-const info = (data) => {
+const info = (data, lang) => {
 	if (data.length === 0) {
 		return [];
 	}
@@ -82,7 +84,8 @@ const info = (data) => {
 			createdAt: +item.post.created_at,
 			banner: parseImage(item.image_list),
 			url: `https://www.hoyolab.com/article/${item.post.post_id}`,
-			type: "info"
+			type: "info",
+			lang
 		});
 	}
 
