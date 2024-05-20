@@ -15,7 +15,7 @@ module.exports = function (fastify, opts, done) {
 
 		const eventData = await app.Query.collection("news")
 			.find({ type: "event", lang: langCode })
-			.project({ type: 0, _id: 0 })
+			.project({ type: 0, lang: 0, _id: 0 })
 			.toArray();
 		
 		if (eventData.length === 0) {
@@ -31,7 +31,7 @@ module.exports = function (fastify, opts, done) {
 
 		const noticeData = await app.Query.collection("news")
 			.find({ type: "notice", lang: langCode })
-			.project({ type: 0, _id: 0 })
+			.project({ type: 0, lang: 0, _id: 0 })
 			.toArray();
 		
 		if (noticeData.length === 0) {
@@ -47,7 +47,7 @@ module.exports = function (fastify, opts, done) {
 
 		const infoData = await app.Query.collection("news")
 			.find({ type: "info", lang: langCode })
-			.project({ type: 0, _id: 0 })
+			.project({ type: 0, lang: 0, _id: 0 })
 			.toArray();
 		
 		if (infoData.length === 0) {
