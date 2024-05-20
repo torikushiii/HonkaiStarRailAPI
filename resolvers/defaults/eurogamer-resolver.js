@@ -40,20 +40,21 @@ exports.fetch = async () => {
 		let reward = {};
 		const rewards = [];
 		for (const [index, i] of tableList.entries()) {
-			if (index % 3 === 0) {
-				reward.code = i;
-			}
-			else if (index % 3 === 1) {
-				reward.rewards = i.split(" and ").flatMap(i => i.split(", "));
-			}
-			else if (index % 3 === 2) {
-				rewards.push({
-					code: reward.code,
-					rewards: reward.rewards,
-					source: "Eurogamer"
-				});
-				
-				reward = {};
+			switch (index % 3) {
+				case 0:
+					reward.code = i;
+					break;
+				case 1:
+					reward.rewards = i.split(" and ").flatMap(i => i.split(", "));
+					break;
+				case 2:
+					rewards.push({
+						code: reward.code,
+						rewards: reward.rewards,
+						source: "Eurogamer"
+					});
+					reward = {};
+					break;
 			}
 		}
 
