@@ -18,10 +18,14 @@ const fetchAll = async () => {
 		.filter((i) => i.code !== "")
 		.filter((i) => i.rewards.length !== 0)
 		.sort((a, b) => {
-			if (a.source === "HoyoLab Forum" && b.source !== "HoyoLab Forum") {
+			const lowPrioritySources = ["HoyoLab Forum", "Eurogamer", "Prydwen"];
+			const aIsLowPriority = lowPrioritySources.includes(a.source);
+			const bIsLowPriority = lowPrioritySources.includes(b.source);
+
+			if (aIsLowPriority && !bIsLowPriority) {
 				return 1;
 			}
-			if (a.source !== "HoyoLab Forum" && b.source === "HoyoLab Forum") {
+			if (!aIsLowPriority && bIsLowPriority) {
 				return -1;
 			}
 
