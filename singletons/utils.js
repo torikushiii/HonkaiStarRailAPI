@@ -17,6 +17,63 @@ module.exports = class UtilsSingleton {
 		return load(html);
 	}
 
+	async localizedMaterials (codes, lang) {
+		const data = [];
+		for (const code of codes) {
+			const materials = code.rewards
+				.map(i => i.replace(/x/g, "")
+					.match(/[a-zA-Z\s']+/g)
+					.join("")
+					.trim()
+				);
+
+			const stuff = [];
+			for (const material of materials) {
+				const materialData = await app.Query.collection("materials").find({
+					lang: "en",
+					$text: {
+						$search: material
+					}
+				}).toArray();
+
+				if (materialData.length === 0) {
+					// If the material is not found in the database, we'll just push the original material.
+					stuff.push(material);
+					continue;
+				}
+
+				const localizedMaterial = await this.getMaterialById(materialData[0].entry_page_id, lang);
+				if (!localizedMaterial) {
+					stuff.push(material);
+					continue;
+				}
+
+				stuff.push(localizedMaterial.name);
+			}
+
+			data.push({
+				code: code.code,
+				materials: stuff,
+				active: code.active
+			});
+		}
+
+		return data;
+	}
+
+	async getMaterialById (id, lang = "en") {
+		const material = await app.Query.collection("materials").findOne({
+			entry_page_id: id,
+			lang
+		});
+
+		if (!material) {
+			return null;
+		}
+
+		return material;
+	}
+
 	languageCodeConverter (lang) {
 		switch (lang) {
 			case "en":
