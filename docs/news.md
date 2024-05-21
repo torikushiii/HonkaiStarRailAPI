@@ -19,7 +19,7 @@ Retrieve a list of current and upcoming events, info, and notices along with the
     - `{type}` can be one of: `events`, `info`, `notices`
 - Method: GET
 - Query Parameters:
-  - `lang`: (optional) Specifies the languageof the response. Supported languages are:
+  - `lang`: (optional) Specifies the language of the response. Supported languages are:
     - `en`: English (default)
     - `cn`: Chinese
     - `tw`: Traditional Chinese
@@ -28,13 +28,13 @@ Retrieve a list of current and upcoming events, info, and notices along with the
     - `fr`: Français
     - `id`: Indonesian
     - `it`: Italiano
-    - `ja`: 日本語
-    - `ko`: 한국어
+    - `jp`: 日本語
+    - `kr`: 한국어
     - `pt`: Português
     - `ru`: Русский
     - `th`: ภาษาไทย
     - `tr`: Türkçe
-    - `vi`: Tiếng Việt
+    - `vn`: Tiếng Việt
 - Response Format: application/json
 
 ### Response
