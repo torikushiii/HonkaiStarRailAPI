@@ -112,6 +112,10 @@ require("./db-access.js");
 		reply.redirect("/starrail/");
 	});
 
+	fastify.addHook("onRequest", async (request, reply) => {
+		console.log(`[${request.ip}] ${request.method} ${request.url}`);
+	});
+
 	logger.info("All services initialized.");
 
 	fastify.listen({ port: config.port, host: config.host }, (error, address) => {
