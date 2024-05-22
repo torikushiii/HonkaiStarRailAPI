@@ -92,8 +92,10 @@ module.exports = class UtilsSingleton {
 				return "id-id";
 			case "it":
 				return "it-it";
+			case "ja":
 			case "jp":
 				return "ja-jp";
+			case "ko":
 			case "kr":
 				return "ko-kr";
 			case "pt":
@@ -104,6 +106,7 @@ module.exports = class UtilsSingleton {
 				return "th-th";
 			case "tr":
 				return "tr-tr";
+			case "vi":
 			case "vn":
 				return "vi-vn";
 			default:
