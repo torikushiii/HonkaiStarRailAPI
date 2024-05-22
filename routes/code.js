@@ -2,7 +2,7 @@ module.exports = function (fastify, opts, done) {
 	const Router = fastify;
 
 	Router.get("/", async (req, res) => {
-		const lang = req.query.lang || "en";
+		let lang = req.query.lang || "en";
 
 		const codes = await app.Query.collection("codes").find({}).toArray();
 		if (codes.length === 0) {
@@ -13,6 +13,13 @@ module.exports = function (fastify, opts, done) {
 		}
 
 		if (lang !== "en") {
+			if (lang === "ja") {
+				lang = "jp";
+			}
+			if (lang === "ko") {
+				lang = "kr";
+			}
+
 			const rewards = await app.Utils.localizedMaterials(codes, lang);
 
 			const active = rewards.filter((code) => code.active).map(i => ({
