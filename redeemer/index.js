@@ -1,4 +1,5 @@
 const config = require("../config.js");
+const { setTimeout } = require("node:timers/promises");
 
 const checkAndRedeem = async (codeList) => {
 	const debug = await app.Logger("debug:redeemer");
@@ -47,12 +48,12 @@ const checkAndRedeem = async (codeList) => {
 				statusCode: res.statusCode
 			});
 
-			await new Promise((resolve) => setTimeout(resolve, 10000));
+			await setTimeout(15000);
 			continue;
 		}
 
 		if (res.body.retcode === -1071) {
-			await new Promise((resolve) => setTimeout(resolve, 10000));
+			await setTimeout(15000);
 			throw new app.Error({
 				message: "Invalid account credentials.",
 				args: {
@@ -61,12 +62,12 @@ const checkAndRedeem = async (codeList) => {
 			});
 		}
 		if (res.body.retcode === -2017) {
-			await new Promise((resolve) => setTimeout(resolve, 10000));
+			await setTimeout(15000);
 			logger.warn(`Code ${data.code} is already redeemed. Skipping...`);
 			continue;
 		}
 		if (res.body.retcode !== 0) {
-			await new Promise((resolve) => setTimeout(resolve, 10000));
+			await setTimeout(15000);
 			throw new app.Error({
 				message: "Unknown error while redeeming code.",
 				args: {
@@ -79,7 +80,7 @@ const checkAndRedeem = async (codeList) => {
 		logger.info(`Successfully redeemed code ${data.code}.`);
 		
 		await sendNotification(data);
-		await new Promise((resolve) => setTimeout(resolve, 10000));
+		await setTimeout(15000);
 	}
 
 	return true;
