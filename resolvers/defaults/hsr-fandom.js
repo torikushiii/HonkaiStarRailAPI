@@ -29,7 +29,7 @@ exports.fetch = async () => {
 			}
 
 			const cleanText = row.replace(/All|(\[\d+\]|Quick Redeem)|CodeServerRewardsDuration/g, "").trim();
-			const codeRegex = /HSRGRANDOPEN[0-9]|[A-Z0-9]{12,15}/;
+			const codeRegex = /HSRGRANDOPEN[0-9]|[A-Z0-9]{11,15}/;
 			const code = cleanText.match(codeRegex)?.[0];
 			if (!code) {
 				continue;
