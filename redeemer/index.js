@@ -148,7 +148,7 @@ const validateRedeemCodes = async () => {
 		if (res.body.retcode === -2017) {
 			// skip this code because it's still active
 			activeCodes.push(data.code);
-			await new Promise((resolve) => setTimeout(resolve, 15000));
+			await setTimeout(15000);
 			continue;
 		}
 		else if (res.body.retcode === -2001 || res.body.retcode === -2003) {
@@ -175,7 +175,7 @@ const validateRedeemCodes = async () => {
 			}
 
 			inactiveCodes.push(data.code);
-			await new Promise((resolve) => setTimeout(resolve, 15000));
+			await setTimeout(15000);
 			continue;
 		}
 		else if (res.body.retcode === -2016) {
@@ -183,9 +183,11 @@ const validateRedeemCodes = async () => {
 				response: res.body
 			});
 
-			await new Promise((resolve) => setTimeout(resolve, 15000));
+			await setTimeout(15000);
 			continue;
 		}
+
+		await setTimeout(15000);
 	}
 
 	return {
