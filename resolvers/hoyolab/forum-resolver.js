@@ -36,14 +36,17 @@ exports.fetch = async () => {
 
 		const codeRegex = /[A-Z0-9]{12}/;
 		const rewardRegex = /Rewards: (.*)/;
+		const unwantedPhrase = "Redemption code is only valid until:";
+
 		const codes = posts.map(i => {
 			const code = i.post.content.match(codeRegex);
 			if (code) {
 				const rewards = i.post.content.match(rewardRegex);
-				const rewardsData = rewards?.[1].split(/&|,/).map(i => i.trim()) ?? [];
+				let rewardsData = rewards?.[1].split(/&|,/).map(i => i.trim()) ?? [];
+				rewardsData = rewardsData.map(reward => reward.replace(unwantedPhrase, "").trim());
 				return {
 					code: code[0],
-					rewards: rewardsData,
+					rewards: rewardsData.filter(reward => reward.length > 0),
 					source: "HoyoLab Forum"
 				};
 			}
