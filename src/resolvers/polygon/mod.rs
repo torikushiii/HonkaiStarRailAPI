@@ -23,7 +23,6 @@ impl PolygonResolver {
         let document = Html::parse_document(html);
         let mut codes = Vec::new();
         
-        // Select all list items
         let list_selector = Selector::parse("ul li").unwrap();
         let code_regex = Regex::new(r"(.*?)\((.*?)\)").unwrap();
         
@@ -34,23 +33,25 @@ impl PolygonResolver {
                 if let (Some(code), Some(rewards_text)) = (captures.get(1), captures.get(2)) {
                     let code = code.as_str().trim().to_string();
                     
-                    // Process rewards
                     let rewards: Vec<String> = rewards_text
                         .as_str()
                         .replace(" and ", ", ")
                         .split(", ")
                         .map(|s| {
-                            let mut parts = s.trim().split(' ');
-                            let mut amount = parts.next().unwrap_or("").to_string();
+                            let mut parts = s.trim().split(" — ");
+                            let reward = parts.next().unwrap_or("").trim().to_string();
+                            
+                            let mut reward_parts = reward.split(' ');
+                            let mut amount = reward_parts.next().unwrap_or("").to_string();
                             
                             // Handle cases where the amount has a comma (e.g., "10,000")
-                            if let Some(next_part) = parts.next() {
+                            if let Some(next_part) = reward_parts.next() {
                                 if next_part.parse::<u32>().is_ok() {
                                     amount.push(',');
                                     amount.push_str(next_part);
-                                    format!("{} {}", amount, parts.collect::<Vec<_>>().join(" "))
+                                    format!("{} {}", amount, reward_parts.collect::<Vec<_>>().join(" "))
                                 } else {
-                                    format!("{} {}", amount, std::iter::once(next_part).chain(parts).collect::<Vec<_>>().join(" "))
+                                    format!("{} {}", amount, std::iter::once(next_part).chain(reward_parts).collect::<Vec<_>>().join(" "))
                                 }
                             } else {
                                 amount
