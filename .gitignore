@@ -3,6 +3,7 @@
 *.log
 .env
 config/production.yaml
+config/development.yaml
 Cargo.lock
 default.yaml
 
