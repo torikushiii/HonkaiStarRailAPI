@@ -1,0 +1,13 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+
+mongodb:
+  uri: "mongodb://127.0.0.1:27017"
+  database: "starrail-api"
+
+hoyolab:
+  region: "" # Required: Your account region (e.g., "prod_official_usa")
+  uid: ""    # Required: Your account UID
+  cookie: "" # Required: Your account cookie
+  user_agent: ""
