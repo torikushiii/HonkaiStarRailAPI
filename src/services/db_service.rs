@@ -5,7 +5,7 @@ use mongodb::{
 };
 use std::sync::Arc;
 use tokio::sync::OnceCell;
-use log::{info, error};
+use log::{info, debug, error};
 use futures::TryStreamExt;
 use crate::resolvers::RedemptionCode;
 use crate::config::Settings;
@@ -100,7 +100,7 @@ impl DbService {
                 .with_options(options)
                 .await?;
         }
-        info!("Saved {} codes to database", codes.len());
+        debug!("Saved {} codes to database", codes.len());
         Ok(())
     }
 

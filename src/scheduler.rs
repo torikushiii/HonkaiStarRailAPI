@@ -1,4 +1,4 @@
-use log::{info, error};
+use log::{info, debug, error};
 use tokio_cron_scheduler::{JobScheduler, Job};
 use crate::services::code_service::CodeService;
 use crate::services::news_service::NewsService;
@@ -16,7 +16,7 @@ pub async fn init_scheduler() -> Result<(), Box<dyn std::error::Error>> {
                     let code_service = Arc::new(code_service);
                     match code_service.get_all_codes().await {
                         Ok((active, inactive)) => {
-                            info!(
+                            debug!(
                                 "Scheduled scraping completed. Found {} active and {} inactive codes",
                                 active.len(),
                                 inactive.len()
