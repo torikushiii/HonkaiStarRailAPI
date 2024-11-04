@@ -6,7 +6,7 @@ mod scheduler;
 mod utils;
 mod handlers;
 
-use actix_web::{web, App, HttpServer, middleware::Logger};
+use actix_web::{web, App, HttpServer, middleware::Logger, middleware::Compress};
 use log::{info, error};
 use actix_web::dev::{Service, ServiceRequest, ServiceResponse, Transform};
 use actix_web::Error;
@@ -112,6 +112,7 @@ async fn main() -> std::io::Result<()> {
     
     HttpServer::new(|| {
         App::new()
+            .wrap(Compress::default())
             .wrap(Logger::new("%a \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %T"))
             .wrap(RateLimiterMiddleware::new(60, 60))
             .route("/starrail", web::get().to(get_api_endpoints))

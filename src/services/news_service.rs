@@ -2,6 +2,8 @@ use mongodb::{Collection, bson::{doc, Document}};
 use crate::resolvers::news::{NewsResolver, NewsItem};
 use log::{info, error, debug};
 use futures::TryStreamExt;
+use futures::future::join_all;
+use crate::utils::lang_parser::{SUPPORTED_LANGUAGES, is_supported_language, parse_language_code};
 
 pub struct NewsService {
     collection: Collection<NewsItem>,
@@ -9,7 +11,8 @@ pub struct NewsService {
 }
 
 impl NewsService {
-    pub async fn new(db_service: &super::db_service::DbService) -> Result<Self, mongodb::error::Error> {
+    pub async fn new() -> Result<Self, mongodb::error::Error> {
+        let db_service = super::db_service::DbService::instance().await;
         let collection = db_service.get_database().collection("news");
         let resolver = NewsResolver::new();
         
@@ -17,22 +20,18 @@ impl NewsService {
     }
 
     pub async fn fetch_all_news(&self) -> Result<Vec<NewsItem>, Box<dyn std::error::Error + Send + Sync>> {
-        let supported_languages = vec![
-            "en-us", "zh-cn", "zh-tw", "de-de", "es-es", "fr-fr", "id-id",
-            "it-it", "ja-jp", "ko-kr", "pt-pt", "ru-ru", "th-th", "tr-tr", "vi-vn"
-        ];
+        let futures: Vec<_> = SUPPORTED_LANGUAGES
+            .iter()
+            .map(|&lang| self.resolver.fetch_news(lang))
+            .collect();
 
+        let results = join_all(futures).await;
+        
         let mut all_news = Vec::new();
-
-        for lang in supported_languages {
-            match self.resolver.fetch_news(lang).await {
-                Ok(news) => {
-                    debug!("Successfully fetched {} news items for language {}", news.len(), lang);
-                    all_news.extend(news);
-                },
-                Err(e) => {
-                    error!("Failed to fetch news for language {}: {}", lang, e);
-                }
+        for result in results {
+            match result {
+                Ok(news) => all_news.extend(news),
+                Err(e) => error!("Failed to fetch news: {}", e),
             }
         }
 
@@ -84,7 +83,12 @@ impl NewsService {
         }
         
         if let Some(lang_str) = lang {
-            filter.insert("lang", lang_str);
+            if !is_supported_language(lang_str) {
+                debug!("Unsupported language code: {}, defaulting to en-us", lang_str);
+                filter.insert("lang", "en-us");
+            } else {
+                filter.insert("lang", parse_language_code(lang_str));
+            }
         }
 
         let mut cursor = self.collection

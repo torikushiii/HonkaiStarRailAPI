@@ -3,10 +3,11 @@ use crate::resolvers::{CodeResolver, RedemptionCode};
 use super::db_service::DbService;
 use super::validator_service::{ValidatorService, ValidationResult};
 use std::sync::Arc;
+use std::collections::HashMap;
 
 pub struct CodeService {
     resolvers: Vec<Arc<dyn CodeResolver>>,
-    db_service: DbService,
+    db_service: Arc<DbService>,
     validator: ValidatorService,
 }
 
@@ -21,7 +22,7 @@ impl CodeService {
             Arc::new(crate::resolvers::hoyolab::HoyolabResolver::new()),
         ];
         
-        let db_service = DbService::new().await?;
+        let db_service = DbService::instance().await;
         let validator = ValidatorService::new();
         
         Ok(Self { resolvers, db_service, validator })
@@ -49,10 +50,14 @@ impl CodeService {
             }
         }
         
-        // Deduplicate codes while preserving existing status
-        // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.dedup_by
-        all_codes.sort_by(|a, b| a.code.cmp(&b.code));
-        all_codes.dedup_by(|a, b| a.code == b.code);
+        // Use HashMap for O(1) deduplication while keeping the last occurrence of each code
+        let mut unique_codes: std::collections::HashMap<String, RedemptionCode> = HashMap::with_capacity(all_codes.len());
+        for code in all_codes {
+            unique_codes.insert(code.code.clone(), code);
+        }
+        
+        // Convert back to Vec
+        let mut all_codes: Vec<RedemptionCode> = unique_codes.into_values().collect();
         
         for code in &mut all_codes {
             if !existing_codes.contains_key(&code.code) {
