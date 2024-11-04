@@ -64,7 +64,7 @@ impl CodeService {
                                 info!("New code {} is valid", code.code);
                                 code.active = true;
                             },
-                            ValidationResult::Expired | ValidationResult::Invalid => {
+                            ValidationResult::Expired | ValidationResult::Invalid | ValidationResult::MaxUsageReached => {
                                 info!("New code {} is invalid", code.code);
                                 code.active = false;
                             },
@@ -110,7 +110,7 @@ impl CodeService {
                         ValidationResult::Valid | ValidationResult::AlreadyRedeemed => {
                             info!("Code {} is still valid", code.code);
                         },
-                        ValidationResult::Expired | ValidationResult::Invalid => {
+                        ValidationResult::Expired | ValidationResult::Invalid | ValidationResult::MaxUsageReached => {
                             info!("Marking code {} as inactive", code.code);
                             if let Err(e) = self.db_service.update_code_status(&code.code, false).await {
                                 error!("Failed to update code status: {}", e);

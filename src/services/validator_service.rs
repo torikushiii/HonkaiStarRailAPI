@@ -18,6 +18,7 @@ pub enum ValidationResult {
     Invalid,
     Cooldown,
     InvalidCredentials,
+    MaxUsageReached,
     Unknown(i32, String),
 }
 
@@ -81,6 +82,10 @@ impl ValidatorService {
             -2016 => {
                 warn!("Code {} is in cooldown", code.code);
                 ValidationResult::Cooldown
+            },
+            -2006 => {
+                warn!("Code {} has reached maximum usage limit", code.code);
+                ValidationResult::MaxUsageReached
             },
             -1071 => {
                 error!("Invalid account credentials");
