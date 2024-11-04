@@ -22,6 +22,7 @@ pub async fn get_codes() -> impl Responder {
         Ok(db_service) => {
             match db_service.get_codes().await {
                 Ok((active, inactive)) => {
+                    debug!("Returning {} active and {} inactive codes", active.len(), inactive.len());
                     let response = SimpleCodeResponse {
                         active: active.into_iter()
                             .map(|code| SimpleRedemptionCode {

@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use log::{debug, error, info};
+use log::{debug, error};
 use reqwest::Client;
 use scraper::{Html, Selector};
 use mongodb::bson::DateTime;
@@ -82,7 +82,7 @@ impl FandomResolver {
             }
         }
 
-        info!("Found {} codes from Fandom", codes.len());
+        debug!("Found {} codes from Fandom", codes.len());
         codes
     }
 }

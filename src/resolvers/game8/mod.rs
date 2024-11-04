@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use log::{debug, error, info};
+use log::{debug, error};
 use reqwest::Client;
 use scraper::{Html, Selector};
 use mongodb::bson::DateTime;
@@ -93,7 +93,7 @@ impl Game8Resolver {
             }
         }
 
-        info!("Found {} codes from Game8", codes.len());
+        debug!("Found {} codes from Game8", codes.len());
         codes
     }
 }

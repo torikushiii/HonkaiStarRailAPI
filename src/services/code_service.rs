@@ -1,4 +1,4 @@
-use log::{info, error, warn};
+use log::{info, error, warn, debug};
 use crate::resolvers::{CodeResolver, RedemptionCode};
 use super::db_service::DbService;
 use super::validator_service::{ValidatorService, ValidationResult};
@@ -40,7 +40,7 @@ impl CodeService {
         for resolver in &self.resolvers {
             match resolver.fetch_codes().await {
                 Ok(codes) => {
-                    info!("Successfully retrieved codes from {}", resolver.name());
+                    debug!("Successfully retrieved codes from {}", resolver.name());
                     all_codes.extend(codes);
                 },
                 Err(e) => {
@@ -56,16 +56,16 @@ impl CodeService {
         
         for code in &mut all_codes {
             if !existing_codes.contains_key(&code.code) {
-                info!("Found new code: {}. Validating...", code.code);
+                info!("New code found: {}", code.code);
                 match self.validator.validate_code(&code).await {
                     Ok(validation_result) => {
                         match validation_result {
                             ValidationResult::Valid | ValidationResult::AlreadyRedeemed => {
-                                info!("New code {} is valid", code.code);
+                                debug!("New code {} is valid", code.code);
                                 code.active = true;
                             },
                             ValidationResult::Expired | ValidationResult::Invalid | ValidationResult::MaxUsageReached => {
-                                info!("New code {} is invalid", code.code);
+                                debug!("New code {} is invalid", code.code);
                                 code.active = false;
                             },
                             ValidationResult::Cooldown => {
@@ -108,10 +108,10 @@ impl CodeService {
                 Ok(validation_result) => {
                     match validation_result {
                         ValidationResult::Valid | ValidationResult::AlreadyRedeemed => {
-                            info!("Code {} is still valid", code.code);
+                            debug!("Code {} is still valid", code.code);
                         },
                         ValidationResult::Expired | ValidationResult::Invalid | ValidationResult::MaxUsageReached => {
-                            info!("Marking code {} as inactive", code.code);
+                            info!("Code {} is now inactive", code.code);
                             if let Err(e) = self.db_service.update_code_status(&code.code, false).await {
                                 error!("Failed to update code status: {}", e);
                             }

@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use log::{debug, error, info};
+use log::{debug, error};
 use reqwest::Client;
 use scraper::{Html, Selector};
 use mongodb::bson::DateTime;
@@ -59,7 +59,7 @@ impl PrydwenResolver {
             }
         }
 
-        info!("Found {} codes from Prydwen", codes.len());
+        debug!("Found {} codes from Prydwen", codes.len());
         codes
     }
 }

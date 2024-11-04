@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use log::{debug, error, info};
+use log::{debug, error};
 use reqwest::Client;
 use scraper::{Html, Selector};
 use mongodb::bson::DateTime;
@@ -94,7 +94,7 @@ impl EurogamerResolver {
             }
         }
 
-        info!("Found {} codes from Eurogamer", codes.len());
+        debug!("Found {} codes from Eurogamer", codes.len());
         codes
     }
 }

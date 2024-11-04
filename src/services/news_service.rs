@@ -27,7 +27,7 @@ impl NewsService {
         for lang in supported_languages {
             match self.resolver.fetch_news(lang).await {
                 Ok(news) => {
-                    info!("Successfully fetched {} news items for language {}", news.len(), lang);
+                    debug!("Successfully fetched {} news items for language {}", news.len(), lang);
                     all_news.extend(news);
                 },
                 Err(e) => {
@@ -40,7 +40,7 @@ impl NewsService {
     }
 
     pub async fn save_news(&self, news: &[NewsItem]) -> Result<(), mongodb::error::Error> {
-        debug!("Starting to save {} news items to database", news.len());
+        debug!("Starting to save news items to database");
         
         for item in news {
             let filter = doc! {
@@ -61,23 +61,17 @@ impl NewsService {
                 }
             };
 
-            debug!("Upserting news item with id: {} and lang: {}", item.external_id, item.lang);
-            
             let update_result = self.collection
                 .update_one(filter, update)
                 .upsert(true)
                 .await?;
 
-            debug!(
-                "Upsert result for news item {}: matched={}, modified={}, upserted={:?}", 
-                item.external_id,
-                update_result.matched_count,
-                update_result.modified_count,
-                update_result.upserted_id
-            );
+            if update_result.upserted_id.is_some() {
+                info!("New news item added: {} ({})", item.title, item.lang);
+            }
         }
 
-        info!("Successfully saved {} news items to database", news.len());
+        debug!("Successfully saved news items to database");
         Ok(())
     }
 

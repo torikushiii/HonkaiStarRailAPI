@@ -132,10 +132,10 @@ impl CodeResolver for HoyolabResolver {
                 }
             }
         } else {
-            info!("No active redemption codes available from Hoyolab");
+            debug!("No active redemption codes available from Hoyolab");
         }
 
-        info!("Found {} codes from Hoyolab", codes.len());
+        debug!("Found {} codes from Hoyolab", codes.len());
         Ok(codes)
     }
 }
