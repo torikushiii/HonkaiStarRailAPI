@@ -39,12 +39,12 @@ pub struct Settings {
 
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
-        let env = std::env::var("RUN_ENV").unwrap_or_else(|_| "default".into());
+        let env = std::env::var("RUN_ENV").unwrap_or_else(|_| "development".into());
         let config_dir = PathBuf::from("config");
         
         let config = Config::builder()
-            .add_source(config::File::from(config_dir.join("default")).required(true))
-            .add_source(config::File::from(config_dir.join(env)).required(false))
+            .add_source(config::File::from(config_dir.join("default")).required(false))
+            .add_source(config::File::from(config_dir.join(&env)).required(true))
             .build()?;
 
         let settings: Settings = config.try_deserialize().map_err(|e| {
@@ -92,7 +92,7 @@ fn default_host() -> String {
 }
 
 fn default_port() -> u16 {
-    9997
+    7878
 }
 
 fn default_mongo_uri() -> String {
