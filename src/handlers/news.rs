@@ -2,7 +2,6 @@ use actix_web::{web, HttpResponse, Responder};
 use serde::Deserialize;
 use log::{debug, error};
 use crate::services::news_service::NewsService;
-use crate::utils::lang_parser::parse_language_code;
 
 #[derive(Deserialize)]
 pub struct NewsQueryParams {
@@ -11,13 +10,13 @@ pub struct NewsQueryParams {
 
 pub async fn get_news_events(query: web::Query<NewsQueryParams>) -> impl Responder {
     debug!("Handling request to get news events");
-    let lang = parse_language_code(query.lang.as_deref().unwrap_or("en"));
+    let lang = query.lang.as_deref();
     
     match NewsService::new().await {
         Ok(news_service) => {
-            match news_service.get_news(Some("event"), Some(lang)).await {
+            match news_service.get_news(Some("event"), lang).await {
                 Ok(news) => {
-                    debug!("Returning {} event news items for language {}", news.len(), lang);
+                    debug!("Returning {} event news items", news.len());
                     HttpResponse::Ok().json(news)
                 },
                 Err(e) => {
@@ -39,13 +38,13 @@ pub async fn get_news_events(query: web::Query<NewsQueryParams>) -> impl Respond
 
 pub async fn get_news_notices(query: web::Query<NewsQueryParams>) -> impl Responder {
     debug!("Handling request to get news notices");
-    let lang = parse_language_code(query.lang.as_deref().unwrap_or("en"));
+    let lang = query.lang.as_deref();
     
     match NewsService::new().await {
         Ok(news_service) => {
-            match news_service.get_news(Some("notice"), Some(lang)).await {
+            match news_service.get_news(Some("notice"), lang).await {
                 Ok(news) => {
-                    debug!("Returning {} notice news items for language {}", news.len(), lang);
+                    debug!("Returning {} notice news items", news.len());
                     HttpResponse::Ok().json(news)
                 },
                 Err(e) => {
@@ -67,13 +66,13 @@ pub async fn get_news_notices(query: web::Query<NewsQueryParams>) -> impl Respon
 
 pub async fn get_news_info(query: web::Query<NewsQueryParams>) -> impl Responder {
     debug!("Handling request to get news info");
-    let lang = parse_language_code(query.lang.as_deref().unwrap_or("en"));
+    let lang = query.lang.as_deref();
     
     match NewsService::new().await {
         Ok(news_service) => {
-            match news_service.get_news(Some("info"), Some(lang)).await {
+            match news_service.get_news(Some("info"), lang).await {
                 Ok(news) => {
-                    debug!("Returning {} info news items for language {}", news.len(), lang);
+                    debug!("Returning {} info news items", news.len());
                     HttpResponse::Ok().json(news)
                 },
                 Err(e) => {

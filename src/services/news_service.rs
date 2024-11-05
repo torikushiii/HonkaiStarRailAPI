@@ -3,7 +3,7 @@ use crate::resolvers::news::{NewsResolver, NewsItem};
 use log::{info, error, debug};
 use futures::TryStreamExt;
 use futures::future::join_all;
-use crate::utils::lang_parser::{SUPPORTED_LANGUAGES, is_supported_language, parse_language_code};
+use crate::utils::lang_parser::{SUPPORTED_LANGUAGES, parse_language_code};
 
 pub struct NewsService {
     collection: Collection<NewsItem>,
@@ -83,13 +83,12 @@ impl NewsService {
         }
         
         if let Some(lang_str) = lang {
-            if !is_supported_language(lang_str) {
-                debug!("Unsupported language code: {}, defaulting to en-us", lang_str);
-                filter.insert("lang", "en-us");
-            } else {
-                filter.insert("lang", parse_language_code(lang_str));
-            }
+            let parsed_lang = parse_language_code(lang_str);
+            debug!("Filtering news by language code: {}", parsed_lang);
+            filter.insert("lang", parsed_lang);
         }
+
+        debug!("Applying MongoDB filter: {:?}", filter);
 
         let mut cursor = self.collection
             .find(filter)
@@ -102,6 +101,7 @@ impl NewsService {
             news.push(item);
         }
 
+        debug!("Found {} news items", news.len());
         Ok(news)
     }
 } 

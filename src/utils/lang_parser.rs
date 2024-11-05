@@ -24,10 +24,6 @@ pub fn parse_language_code(lang_code: &str) -> &'static str {
     }
 }
 
-pub fn is_supported_language(lang_code: &str) -> bool {
-    SUPPORTED_LANGUAGES.contains(&parse_language_code(lang_code))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -45,12 +41,5 @@ mod tests {
         assert_eq!(parse_language_code("invalid"), "en-us");
         assert_eq!(parse_language_code(""), "en-us");
         assert_eq!(parse_language_code(" en "), "en-us"); // tests trim
-    }
-
-    #[test]
-    fn test_supported_language() {
-        assert!(is_supported_language("en"));
-        assert!(is_supported_language("ja"));
-        assert!(!is_supported_language("xx"));
     }
 } 
