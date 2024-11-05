@@ -82,17 +82,16 @@ impl NewsService {
             filter.insert("type", type_str);
         }
         
-        if let Some(lang_str) = lang {
-            let parsed_lang = parse_language_code(lang_str);
-            debug!("Filtering news by language code: {}", parsed_lang);
-            filter.insert("lang", parsed_lang);
-        }
+        let parsed_lang = lang.map_or("en-us", parse_language_code);
+        debug!("Filtering news by language code: {}", parsed_lang);
+        filter.insert("lang", parsed_lang);
 
         debug!("Applying MongoDB filter: {:?}", filter);
 
         let mut cursor = self.collection
             .find(filter)
             .sort(doc! { "created_at": -1 })
+            .limit(20)
             .await?;
 
         let mut news = Vec::new();
@@ -101,7 +100,7 @@ impl NewsService {
             news.push(item);
         }
 
-        debug!("Found {} news items", news.len());
+        debug!("Found {} news items (limited to 20)", news.len());
         Ok(news)
     }
 } 
