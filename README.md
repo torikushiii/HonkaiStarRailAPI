@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> Project is archived and moved to [hoyoverse-api](https://github.com/torikushiii/hoyoverse-api)
+
 # Honkai: Star Rail API
 
 **Hosted API at https://api.ennead.cc/starrail**
